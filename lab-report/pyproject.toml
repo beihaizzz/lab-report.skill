@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lab-report"
+version = "0.1.0"
+description = "OpenCode Skill for generating lab reports from templates"
+requires-python = ">=3.10"
+dependencies = [
+    "python-docx",
+    "docxtpl",
+    "pdfplumber",
+    "python-pptx",
+    "pymupdf4llm",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools]
+packages = []
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v"
