@@ -299,7 +299,7 @@ def main():
     parser.add_argument('--data', '-d', required=True, help='JSON data file')
     parser.add_argument('--output', '-o', required=True, help='Output DOCX file')
     parser.add_argument('--style', '-s', choices=['perfect', 'normal'], default='normal',
-                        help='Report style (both use de-AI guidelines)')
+                        help='normal=标准报告(90+分, 日常首选); perfect=极尽详尽(特殊场景)')
     parser.add_argument('--image-placeholders', help='JSON file with image placeholder definitions')
     args = parser.parse_args()
 

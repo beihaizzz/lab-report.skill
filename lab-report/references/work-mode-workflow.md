@@ -76,8 +76,8 @@ Required metadata to confirm:
 同组人员及分工：_________（选填）
 
 另外，你希望报告采用哪种风格？
-1）perfect（完整专业，适合提交）
-2）normal（标准填写，偏简洁）
+1）perfect（极尽详尽：覆盖所有细节，特殊场景使用）
+2）normal（标准报告：内容完整规范，日常使用首选）
 ```
 
 Save confirmed metadata to `.lab-report/config.json` for reuse across re-generations.
@@ -90,10 +90,8 @@ After confirming metadata, explicitly ask the student which report style they wa
 
 | Style | When to recommend |
 |-------|-------------------|
-| `perfect` | 报告要提交给老师评分 — 内容充实，结构完整 |
-| `normal` | 快速出稿，自己留存 — 内容标准，偏简洁 |
-
-Pass the user's choice to `fill_template.py` via `--style`.
+| `normal` | **日常首选**。标准实验报告，内容完整、结构规范，老师看了能给 90+ 分 |
+| `perfect` | **极少数场景**。尽最大可能详尽，覆盖所有细节和可能情况 |
 
 Both styles apply de-AI guidelines (no 首先/其次/最后, natural paragraphs).
 
@@ -312,8 +310,8 @@ python scripts/fill_template.py \
 
 | Style | Behavior | When to use |
 |-------|----------|-------------|
-| `normal` | Standard fill. Content may have minor AI patterns. | 快速出稿、自己留存 |
-| `perfect` | Content more detailed; applies de-AI style. Use for submission. | 提交给老师评分 |
+| `normal` | 标准实验报告，内容完整规范，90+分水平。日常使用首选。 | 日常提交 |
+| `perfect` | 极尽详尽，覆盖所有细节。用于特别重要的场景。 | 特殊场景 |
 
 Both styles apply CJK font fixes (宋体 for body text, 黑体 for headings) via the `w:eastAsia` attribute.
 

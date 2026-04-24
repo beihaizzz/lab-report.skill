@@ -80,8 +80,8 @@ Scanned PDFs (image-only) are detected and reported. Ask user whether to skip, a
 
 ## Report Styles
 Two styles, both apply de-AI guidelines:
-- `perfect`: Complete, professional, well-structured
-- `normal`: Standard fill, conversational
+- `normal`: 标准实验报告。内容完整、结构清晰、语言规范，老师看了能给 90+ 分。日常使用的主要风格。
+- `perfect`: 极少数场景使用。尽最大可能详尽，覆盖所有细节和可能情况，适合特别重要的提交。
 - Both: No AI signature words (首先, 其次, 最后...), natural paragraph flow, no bullet lists
 
 ## Scripts Reference
