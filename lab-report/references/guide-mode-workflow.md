@@ -299,4 +299,10 @@ python scripts/progress_manager.py --step N --note "备注内容"
 
 # Reset progress
 python scripts/progress_manager.py --reset --experiment "名称" --total-steps N
+
+# Git — stage (default, visible in review sidebar)
+python scripts/git_manager.py
+
+# Git — stage + commit (bypasses review sidebar)
+python scripts/git_manager.py --commit --message "实验完成"
 ```

@@ -60,7 +60,7 @@ Summary:
 7. Build JSON data context from student info + experiment metadata + photo analysis
 8. Call `scripts/fill_template.py` to generate report (with style inheritance from template cells)
 9. Generate new Word file (original template untouched, font/size/alignment inherited)
-10. Auto-commit via git if enabled
+10. **Stage changes**: default `git add` only — files appear in review sidebar for user to inspect. Use `--commit` to auto-commit if user prefers.
 
 ## File Format Support
 | Format | Read | Script |

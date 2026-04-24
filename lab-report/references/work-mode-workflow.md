@@ -353,21 +353,31 @@ The script automatically sets CJK fonts, but verify manually if the output looks
 
 ---
 
-## Step 8: Auto-Commit (Optional)
+## Step 8: Stage for Review (Optional)
 
-If git tracking is enabled, commit the output:
+Files are **staged** (not committed) by default so they appear in the review sidebar.
+
+### Stage for review (default — files visible in sidebar)
 
 ```bash
-python scripts/git_manager.py --message "生成实验报告: 实验名称"
+python scripts/git_manager.py
 ```
 
-Or with a dry run first:
+After this, the generated report appears in OpenCode Desktop's **审查侧边栏** for the user to inspect.
+
+### Stage + commit (bypasses sidebar)
+
+Use `--commit` when the user explicitly asks to skip the review step:
+
+```bash
+python scripts/git_manager.py --commit --message "生成实验报告"
+```
+
+### Preview without making changes
 
 ```bash
 python scripts/git_manager.py --dry-run
 ```
-
-The script stages all changes and commits. It silently exits if the directory is not a git repo.
 
 ---
 
@@ -460,9 +470,12 @@ python scripts/fill_template.py -t template.docx -d data.json -o output.docx \
 # Fill template and save config for reuse
 python scripts/fill_template.py -t template.docx -d data.json -o output.docx --style normal
 
-# Auto-commit output
-python scripts/git_manager.py --message "生成实验报告"
+# Stage (default — appears in review sidebar)
+python scripts/git_manager.py
 
-# Dry-run commit
+# Stage + commit (skips review sidebar)
+python scripts/git_manager.py --commit --message "生成实验报告"
+
+# Preview
 python scripts/git_manager.py --dry-run
 ```
