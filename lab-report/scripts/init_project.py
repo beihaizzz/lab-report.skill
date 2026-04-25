@@ -42,8 +42,19 @@ def discover_files(directory: Path) -> dict:
             files["templates"].append(file.name)
         elif suffix == '.pptx':
             files["guides"].append(file.name)
-        elif suffix in ['.md', '.txt']:
+        elif suffix in ['.md', '.txt', '.cs', '.py', '.cpp', '.h']:
             files["references"].append(file.name)
+    
+    # Scan subdirectories for reference code folders
+    for sub in directory.iterdir():
+        if not sub.is_dir():
+            continue
+        name_lower = sub.name.lower()
+        if any(kw in name_lower for kw in ['供参考', '参考', 'reference', 'script', 'scripts', '资源']):
+            count = len(list(sub.rglob('*')))
+            if count > 0:
+                files.setdefault("reference_dirs", [])
+                files["reference_dirs"].append({"name": sub.name, "file_count": count})
     
     return files
 

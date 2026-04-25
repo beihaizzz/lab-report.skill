@@ -37,6 +37,7 @@ def load_progress() -> dict:
         "completed_steps": [],
         "screenshots_required": [],
         "notes": {},
+        "debug_history": [],
         "last_updated": datetime.now().isoformat(),
         "status": "not_started"
     }
@@ -112,6 +113,20 @@ def add_note(step: int, note: str):
     save_progress(data)
     return data
 
+def add_debug_history(step: int, error: str, attempt: int, approach: str = ""):
+    """Record a debug failure in history."""
+    data = load_progress()
+    data.setdefault("debug_history", [])
+    data["debug_history"].append({
+        "step": step,
+        "attempt": attempt,
+        "timestamp": datetime.now().isoformat(),
+        "error": error,
+        "approach": approach,
+    })
+    save_progress(data)
+    return data
+
 def reset_progress(experiment_name: str = None, total_steps: int = None):
     """Reset progress to initial state."""
     data = load_progress()
@@ -140,6 +155,10 @@ def main():
     parser.add_argument('--description', help='Screenshot description')
     parser.add_argument('--path', help='Screenshot path')
     parser.add_argument('--note', help='Add note for step')
+    parser.add_argument('--debug', action='store_true', help='Record debug failure')
+    parser.add_argument('--error', help='Debug error message')
+    parser.add_argument('--attempt', type=int, default=1, help='Debug attempt number')
+    parser.add_argument('--approach', default='', help='Debug approach description')
     parser.add_argument('--reset', action='store_true', help='Reset progress')
 
     args = parser.parse_args()
@@ -167,6 +186,13 @@ def main():
             print("Error: --note requires --step", file=sys.stderr)
             sys.exit(1)
         data = add_note(args.step, args.note)
+        print(json.dumps(data, indent=2, ensure_ascii=False))
+
+    elif args.debug:
+        if not args.step or not args.error:
+            print("Error: --debug requires --step and --error", file=sys.stderr)
+            sys.exit(1)
+        data = add_debug_history(args.step, args.error, args.attempt, args.approach)
         print(json.dumps(data, indent=2, ensure_ascii=False))
 
     elif args.reset:

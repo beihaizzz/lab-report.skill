@@ -4,9 +4,46 @@ Guide Mode walks a student through an experiment step by step, tracking progress
 
 ---
 
-## Overview
+## Step 0: Pre-Flight Checks (MANDATORY)
 
-Guide Mode is the first of two modes. It parses an experiment guide (PDF or PPTX), extracts discrete steps, identifies which steps need screenshots, and presents the full workflow to the student. The student works through steps at their own pace, saying "继续" to advance.
+### 0.1 Scan Reference Resources
+
+Before parsing the guide, scan the project directory for **pre-existing code and reference files**:
+
+```bash
+glob("**/供参考/*")        # Common naming: 供参考, 参考, reference
+glob("**/*.cs")             # C# scripts (Unity)
+glob("**/Scripts/*.cs")     # Unity Scripts folder
+```
+
+List ALL found files to the student and flag them:
+```
+📂 发现以下可参考资源（可能已有可用方案）：
+- Scripts/RespawnScript.cs (2.1 KB)
+- 实验1-相关资源(供参考)/Step1_基础移动.cs
+💡 这些代码可以直接阅读参考，避免从零实现。
+```
+
+### 0.2 Environment Compatibility Check
+
+When the experiment guide was written for an older environment version and mentions **specific APIs, library functions, or tool features**, check compatibility BEFORE executing:
+
+```
+⚠️ 兼容性检查提醒：
+- MeshCollider.IsTrigger → 2020+ 中 Plane 的 MeshCollider 不能设为 Trigger。替代：BoxCollider 或坐标检测。
+- WWW 类 → 2018.3 已废弃。替代：UnityWebRequest。
+- 如果 API 不确定 → 先查官方文档（unity_docs lookup）再动手。
+```
+
+### 0.3 Git Savepoint (Strongly Recommended)
+
+If git is enabled, create a savepoint **before each code modification**:
+
+```bash
+python scripts/git_manager.py --commit --message "savepoint: before step N"
+```
+
+This allows instant rollback if a modification breaks existing functionality.
 
 ---
 
@@ -150,6 +187,62 @@ The student drives progress. The AI responds to these triggers:
    ```bash
    python scripts/progress_manager.py --step N --note "学生跳过了此步骤"
    ```
+
+### ⚠️ Hard Rule: 3 Failures Per Approach = Change Strategy
+
+When debugging or implementing a step, if the SAME solution approach has failed 3 times:
+
+1. **STOP** immediately — do NOT continue the same approach
+2. **Record** the failures in debug_history
+3. **Propose** at least 2 alternative approaches
+4. **Ask** the student which alternative to try
+5. **Switch** to the chosen alternative
+
+```
+❌ 同一方案已失败 3 次！不再继续调参。
+📋 已记录的失败原因： {列出每一次失败的具体报错}
+
+🔀 替代方案：
+A) {方案 A — 不同 API/不同架构}
+B) {方案 B — 完全不同的思路}
+C) 先回退到步骤 N 之前，重新开始
+
+请选择替代方案：
+```
+
+### Recording Debug History
+
+When a modification fails with an error, record it:
+
+```bash
+python scripts/progress_manager.py --debug --step N --error "error message" --attempt 1
+```
+
+This appends to `debug_history` in progress.json:
+
+```json
+{
+  "debug_history": [
+    {
+      "step": 5,
+      "attempt": 1,
+      "timestamp": "2026-04-25T14:30:00",
+      "error": "NullReferenceException: MeshCollider on Plane cannot be set to IsTrigger",
+      "approach": "MeshCollider.IsTrigger on Plane"
+    }
+  ]
+}
+```
+
+### ⚠️ Minimum-Change Principle
+
+When modifying code to fix an issue:
+1. Change only ONE thing at a time
+2. Test immediately after the single change
+3. If it fixes the issue, stop — don't "clean up" or make additional changes
+4. If it doesn't fix, revert that change before trying another
+
+Avoid: "I'll fix the Trigger AND adjust the player position AND change the GameControl... now let me test."
 
 ---
 
@@ -296,6 +389,9 @@ python scripts/progress_manager.py --screenshot --step N --path "path/to/file.jp
 
 # Add a note
 python scripts/progress_manager.py --step N --note "备注内容"
+
+# Record debug failure
+python scripts/progress_manager.py --debug --step N --error "error message" --attempt 1 --approach "approach name"
 
 # Reset progress
 python scripts/progress_manager.py --reset --experiment "名称" --total-steps N
