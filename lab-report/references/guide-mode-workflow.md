@@ -348,6 +348,25 @@ When all steps are done (`status` becomes `completed`):
 
 ---
 
+## Step 8.5: Auto-Commit Before Transition
+
+When the user explicitly indicates they are moving to the next task — such as saying **"开始下一个实验"、"下一步"、"继续实验二"** etc. — **commit the current work first**:
+
+```bash
+python scripts/git_manager.py --commit --message "实验一完成：{要点}"
+```
+
+**Why**: This creates a named savepoint that can be reverted to if needed. Future agents loading the session can see exactly what was done in each experiment.
+
+**When to trigger**:
+- User says "开始下一个实验" / "继续实验二" / "下一步"
+- User says "生成实验报告" after Guide Mode completes
+- Any explicit transition intent
+
+**Don't trigger on**: casual conversation, step-by-step progress updates during the same experiment.
+
+---
+
 ## Error Handling
 
 | Situation | Response |

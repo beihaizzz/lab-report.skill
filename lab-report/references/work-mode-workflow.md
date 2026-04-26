@@ -446,6 +446,16 @@ The script automatically sets CJK fonts, but verify manually if the output looks
 
 ## Step 8: Git 文件管理
 
+### Auto-Commit Before Transition
+
+When the user says **"开始下一个实验"、"下一步"、"继续实验二"** — **commit first**:
+
+```bash
+python scripts/git_manager.py --commit --message "实验报告完成：{实验名称}"
+```
+
+This saves the current work as a named checkpoint before moving on.
+
 ### 默认：仅报告（文件保留在 Changes 面板）
 
 ```bash
