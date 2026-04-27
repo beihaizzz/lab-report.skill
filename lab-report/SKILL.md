@@ -119,3 +119,23 @@ Run scripts via `uv run --with <pkgs> python scripts/<name>.py`:
 - **Scanned PDF detected**: PDF has no text layer. Ask user to provide text version or manually enter content.
 - **Placeholders not replaced**: Check that template uses `{{placeholder}}` syntax. `scripts/parse_docx.py` lists all detected placeholders.
 - **uv not found**: Install from https://github.com/astral-sh/uv
+
+## PowerShell 编码规则（Windows 必读）
+
+**绝对禁止以下模式**（在 PowerShell 下含中文的 inline Python 会崩溃）：
+
+```powershell
+# ❌ 会导致编码错误，浪费 token
+uv run python -c "print('中文')"
+uv run python -c "with open('实验.txt') as f: ..."
+```
+
+**必须写成文件再执行**：
+
+```powershell
+# ✅ 正确做法
+Set-Content script.py "print('中文')" -Encoding UTF8
+uv run python script.py
+```
+
+**原因**: PowerShell 下 `python -c` 的引号嵌套 + UTF-8 编码有已知 bug，中文必炸。写成文件零成本避免，省去每次重试 + 排查的 token 开销。

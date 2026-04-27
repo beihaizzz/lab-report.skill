@@ -167,11 +167,16 @@ def find_cell_by_content(table, row_index: int, text_contains: str) -> Optional[
 def fill_cell_safe(cell, text: str, font_name=FONT_BODY, font_size_pt=SIZE_BODY,
                    bold=False, east_asia=None, align=None):
     """Safely write text into a cell.
-    
-    清除旧内容、写入新文本、设字体/对齐/eastAsia。支持:
+
+    清除旧内容、写入新文本、设字体/对齐/eastAsia。自动清理嵌套表格残留。
     - 普通填充: fill_cell_safe(cell, "张三")
     - 表格值填充: fill_cell_safe(cell, "张三", font_name=FONT_BODY, align="CENTER")
     """
+    # 清理嵌套表格（用 paragraph.clear() 清不了 w:tbl 元素，需手动移除）
+    tc = cell._tc
+    for tbl_elem in tc.findall('.//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tbl'):
+        tc.remove(tbl_elem)
+
     for p in cell.paragraphs:
         p.clear()
     first_para = cell.paragraphs[0]
