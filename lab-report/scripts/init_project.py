@@ -132,6 +132,54 @@ def _save_config(directory: Path, data: dict):
     existing.update(data)
     config_file.write_text(json.dumps(existing, indent=2, ensure_ascii=False), encoding='utf-8')
 
+
+def _create_or_update_project_md(directory: Path, experiment_name: str = None,
+                                  course_info: dict = None,
+                                  student_info: dict = None) -> Path:
+    """在课程根目录创建或更新 project.md。
+
+    project.md 是课程级别的上下文文件，记录课程信息和实验进度。
+    不存敏感信息（学生姓名等存于学生信息.md），仅存元信息。
+    """
+    project_md = directory / "project.md"
+
+    # 解析已有内容（只读 key: value 行）
+    existing = {}
+    if project_md.exists():
+        for line in project_md.read_text(encoding='utf-8').split('\n'):
+            if ':' in line and not line.startswith(('#', '- ', '>')):
+                k, v = line.split(':', 1)
+                existing[k.strip()] = v.strip()
+    if course_info:
+        existing.update(course_info)
+
+    lines = ["# 课程信息\n"]
+    for key in ["课程名称", "课程代码", "任课教师"]:
+        lines.append(f"{key}: {existing.get(key, f'{{{{key}}}}')}")
+
+    # 实验进度（保留已有 checkbox，追加新实验）
+    lines.append("\n# 实验进度\n")
+    old_boxes = set()
+    if project_md.exists():
+        for line in project_md.read_text(encoding='utf-8').split('\n'):
+            if line.startswith('- [') and '实验' in line:
+                old_boxes.add(line.strip())
+                lines.append(line)
+    if experiment_name:
+        entry = f"- [ ] {experiment_name}"
+        if entry not in old_boxes:
+            lines.append(entry)
+    if not any('- [' in l for l in lines if l.startswith('- [')):
+        lines.append("- [ ] ...")
+
+    lines.append("\n# 通用配置\n")
+    lines.append("默认风格: normal")
+    lines.append("Git: 未启用")
+    lines.append("\n---\n> 由 lab-report skill 自动维护。AI 每次会话启动时先读此文件了解项目状态。")
+
+    project_md.write_text('\n'.join(lines), encoding='utf-8')
+    return project_md
+
 def init_project(directory: Path, use_git: bool = False, experiment_name: str = None):
     """Initialize project."""
     result = {

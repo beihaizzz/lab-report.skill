@@ -6,6 +6,10 @@ Guide Mode walks a student through an experiment step by step, tracking progress
 
 ## Step 0: Pre-Flight Checks (MANDATORY)
 
+### 0.0 Read project.md
+
+If `project.md` exists in the project root, read it first. It contains course info (course name, code, teacher) and experiment progress — no need to scan the entire directory or ask the user for these.
+
 ### 0.1 Scan Reference Resources
 
 Before parsing the guide, scan the project directory for **pre-existing code and reference files**:

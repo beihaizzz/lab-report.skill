@@ -51,6 +51,12 @@ Collect the student's response and use it as the primary data source. You can st
 
 ---
 
+### Pre-Step: Read project.md
+
+Before asking any questions, check if `project.md` exists in the project root. If it does, read it to auto-fill course name, course code, teacher info — no need to ask the user for these.
+
+---
+
 ## Step 1.5: Confirm Experiment Metadata (fix 1.1)
 
 **Before generating content, actively ask the student for experimental metadata** using the `question` tool.

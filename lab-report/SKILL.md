@@ -33,6 +33,17 @@ Lab Report helps university students complete experiments and write reports. Two
 4. Run `/lab-report init` to initialize
 5. Start Guide Mode or Work Mode
 
+## Session Startup Protocol
+
+每次会话开始时（无论 Guide Mode 还是 Work Mode）：
+
+1. **Read `project.md`** — 了解课程信息、实验进度、通用配置
+2. **Read `学生信息.md`** — 获取个人信息
+3. **Verify key paths** — 检查 project.md 中引用的文件是否还存在
+4. If paths stale → 告知用户并更新 project.md
+
+project.md 是 session 的"快速上下文"——读它即可了解整个项目状态，无需重新扫描整个目录。
+
 ## /lab-report init
 Initializes the project. Auto-discovers course materials, finds/creates `学生信息.md`, creates `.lab-report/` directory. Supports `--git` for automatic version control.
 
