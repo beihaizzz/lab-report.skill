@@ -1,8 +1,11 @@
 __pycache__/
 .pytest_cache/
 .lab-report/progress.json
+.sisyphus/
 *.pyc
 .DS_Store
 *.egg-info/
 dist/
 build/
+.venv/
+uv.lock
