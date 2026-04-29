@@ -11,7 +11,7 @@ dependencies = [
     "python-docx",
     "docxtpl",
     "pdfplumber",
-    "python-pptx",
+    "markitdown",
     "pymupdf4llm",
 ]
 

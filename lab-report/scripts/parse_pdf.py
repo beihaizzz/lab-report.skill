@@ -13,7 +13,14 @@ try:
 except ImportError:
     HAS_DEPS = False
 
-def parse_pdf(filepath: Path, output_format: str = "json"):
+try:
+    import pytesseract
+    from pdf2image import convert_from_path
+    HAS_OCR = True
+except ImportError:
+    HAS_OCR = False
+
+def parse_pdf(filepath: Path, output_format: str = "json", ocr: bool = False):
     """Parse PDF and extract text."""
     if not HAS_DEPS:
         return {"error": "Missing dependencies: pdfplumber, pymupdf4llm"}
@@ -43,8 +50,30 @@ def parse_pdf(filepath: Path, output_format: str = "json"):
             
             # Check if scanned (no extractable text)
             if not total_text.strip():
-                result["is_scanned"] = True
-                result["warning"] = "SCANNED_PDF_DETECTED"
+                if ocr and HAS_OCR:
+                    # Attempt OCR for scanned PDFs
+                    try:
+                        images = convert_from_path(str(filepath))
+                        result["text_by_page"] = []
+                        total_text = ""
+                        for i, img in enumerate(images):
+                            page_text = pytesseract.image_to_string(img, lang='chi_sim+eng')
+                            result["text_by_page"].append({
+                                "page": i + 1,
+                                "content": page_text
+                            })
+                            total_text += page_text + "\n"
+                        result["is_scanned"] = False
+                        result["warning"] = "OCR_USED"
+                    except Exception as e:
+                        result["is_scanned"] = True
+                        result["warning"] = f"OCR_FAILED: {e}"
+                elif ocr and not HAS_OCR:
+                    result["is_scanned"] = True
+                    result["warning"] = "OCR_DEPS_MISSING"
+                else:
+                    result["is_scanned"] = True
+                    result["warning"] = "SCANNED_PDF_DETECTED"
         
         # Convert to markdown with pymupdf4llm
         try:
@@ -66,6 +95,7 @@ def main():
     parser = argparse.ArgumentParser(description='Parse PDF file')
     parser.add_argument('--input', '-i', required=True, help='Input PDF file')
     parser.add_argument('--format', '-f', choices=['json', 'markdown'], default='json')
+    parser.add_argument('--ocr', action='store_true', help='Enable OCR for scanned PDFs')
     args = parser.parse_args()
     
     filepath = Path(args.input)
@@ -73,7 +103,7 @@ def main():
         print(f"Error: File not found: {filepath}", file=sys.stderr)
         sys.exit(1)
     
-    result = parse_pdf(filepath, args.format)
+    result = parse_pdf(filepath, args.format, ocr=args.ocr)
     
     if args.format == "markdown":
         print(result.get("markdown", ""))

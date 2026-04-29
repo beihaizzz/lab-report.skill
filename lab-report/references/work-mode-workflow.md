@@ -596,6 +596,24 @@ python scripts/git_manager.py --commit --message "生成实验报告"
 
 ---
 
+## Step 7.5: Validate Output Document (Optional)
+
+After generating the report, verify its structural integrity:
+
+```bash
+python scripts/validate_docx.py --input output.docx --inspect .lab-report/template-inspect.json
+```
+
+The validator checks:
+- No residual `{{placeholder}}` markers remain
+- Table structure matches the template
+- Label cells are preserved (not overwritten)
+- File opens without errors
+
+Use `--strict` to fail on any warning.
+
+---
+
 ## Error Handling
 
 | Situation | Response |
@@ -653,6 +671,9 @@ python scripts/fill_template.py \
   -t template.docx -d .lab-report/template-data.json \
   --inspect .lab-report/template-inspect.json \
   -o output.docx --style perfect
+
+# Validate generated report (optional)
+python scripts/validate_docx.py --input output.docx --inspect .lab-report/template-inspect.json
 
 # Git — 默认仅报告（文件保留在 Changes 面板）
 python scripts/git_manager.py
